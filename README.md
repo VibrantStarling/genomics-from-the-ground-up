@@ -85,7 +85,7 @@ tput setaf 2; echo "softmasking complete"; tput sgr0
 
 [Here's a video](https://www.youtube.com/watch?v=UXTkJ4mUkyg) on how to run all versions of BRAKER and GALBA (feat. OMArk and BUSCO). I highly reccomend taking the time to watch it.
 
-**Clean your RNAseq data**
+#### **Clean your RNAseq data**
 
 You don't know where your RNAseq data has come from. Quality check (QC) it and give it a clean.
 
@@ -129,7 +129,7 @@ do
 done
 ```
 
-**Align your RNAseq data**
+#### **Align your RNAseq data**
 
 Next, use `Hisat2` to align your RNAseq data to your genome. 
 
@@ -183,12 +183,6 @@ rm ${NAME}-hisat2-rnaseq.sam; rm ${NAME}-hisat2-rnaseq.bam
 
 `--workingdir`, names the output directory
 
-**Getting BUSCO scores**
-
-You may also want to run BUSCO to check your outputs. You can do this in BRAKER via `compleasm` by adding `--busco_lineage=lineage` and naming a [BUSCO lineage](https://busco.ezlab.org/list_of_lineages.html) like 'alveolata_odb10' or 'fungi_odb10'.
-
-Alternatively, run BUSCO through [compleasm](https://github.com/huangnengCSU/compleasm) yourself.
-
 
 ```python
 T=32
@@ -201,6 +195,12 @@ WD=$(basename -s .bam ${SORTED_BAM})_$(basename -s .fa ${PROT_DB})
 # run BRAKER3
 singularity exec -B ${PWD}:${PWD},${HOME} ${HOME}/braker3.sif braker.pl --genome=${GENOME} --prot_seq=${HOME}/BRAKER-DB/Alveolata.fa --bam=${SORTED_BAM} --threads=${T} --gff
 ```
+
+#### **Getting BUSCO scores**
+
+You may also want to run BUSCO to check your outputs. You can do this in BRAKER via `compleasm` by adding `--busco_lineage=lineage` and naming a [BUSCO lineage](https://busco.ezlab.org/list_of_lineages.html) like 'alveolata_odb10' or 'fungi_odb10'.
+
+Alternatively, run BUSCO through [compleasm](https://github.com/huangnengCSU/compleasm) yourself.
 
 ## 2b. Run Funnannotate
 
