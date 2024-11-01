@@ -25,7 +25,7 @@ conda install -c bioconda hisat2 trimmomatic samtools seqkit
 singularity pull dfam-tetools-latest.sif docker://dfam/tetools:latest
 ```
 
-The singularity image for `BRAKER`:
+- The singularity image for `BRAKER`:
 
 ```bash
 # This code builds and test BRAKER
@@ -41,7 +41,7 @@ bash test2.sh # tests BRAKER2
 bash test3.sh # tests BRAKER3
 ```
 
-The singularity image for `Funannotate`:
+- The singularity image for `Funannotate`:
 
 ```bash
 singularity build funannotate.sif docker://nextgenusfs/funannotate:latest
