@@ -7,6 +7,11 @@ I always recommend loading your genome into a genome viewer like Artemis, Apollo
 ## Software you'll need
 The singularity image for `dfam-TEtool` (dfam-tetools-latest.sif) in your home directory. This allows access to `Repeatmasker` and `RepeatModeller`
 
+```bash
+singularity pull dfam-tetools-latest.sif docker://dfam/tetools:latest
+conda install -c bioconda hisat2 trimmomatic samtools seqkit
+```
+
 `hisat2`, the aligner we will be using
 
 `trimmomatic`, to clean up messy RNAseq data
@@ -15,13 +20,29 @@ The singularity image for `dfam-TEtool` (dfam-tetools-latest.sif) in your home d
 
 `seqkit`, to quickly and cleanly handle and edit fastq files
 
+The singularity image for `BRAKER`:
 
+```bash
+# This code builds and test BRAKER
 
+singularity build braker3.sif docker://teambraker/braker3:latest
+singularity exec braker3.sif braker.pl
+export BRAKER_SIF=braker3.sif
+singularity exec -B $PWD:$PWD braker3.sif cp /opt/BRAKER/example/singularity-tests/test1.sh .
+singularity exec -B $PWD:$PWD braker3.sif cp /opt/BRAKER/example/singularity-tests/test2.sh .
+singularity exec -B $PWD:$PWD braker3.sif cp /opt/BRAKER/example/singularity-tests/test3.sh .
+bash test1.sh # tests BRAKER1
+bash test2.sh # tests BRAKER2
+bash test3.sh # tests BRAKER3
 
-```python
-singularity pull dfam-tetools-latest.sif docker://dfam/tetools:latest
-conda install -c bioconda hisat2 trimmomatic samtools seqkit
 ```
+
+The singularity image for `Funannotate`:
+
+```bash
+singularity build funannotate.sif docker://nextgenusfs/funannotate:latest
+```
+
 
 # The steps to annotate a genome *in silico*
 
@@ -70,7 +91,7 @@ ATGCCGCAAAAAAATTTTTAGGC --> ATGCCGCNNNNNNNNNNNNAGGC
 Maskers can struggle if memory is not fast enough and data may need to be stored on compute HPC nodes
 
 
-```python
+```bash
 DB=output_name_for_repeat_db
 GENOME=genome.fa
 
@@ -96,12 +117,11 @@ Next we need to clean it. We will be using `Trimmomatic`. Trimmomatic can be a l
 You'll need to pass trimmomatic the location of an adaptor file. These can be found on their Github. In the code below replace `TruSeq3-PE.fa` with the path/name.fa of your adpaters (probably also TruSeq3-PE.fa).
 
 
-
-```python
+For PAIRED data:
+```bash
 # define your SRA list file
 SRA_LIST=sra-list.txt
 
-# for PAIRED data
 for RNA_PREFIX in $(cat ${SRA_LIST})
 do
     RNASEQ_FWD=${RNA_PREFIX}_1_clean.fastq.gz
@@ -119,9 +139,8 @@ do
 done
 ```
 
-
-```python
-# for UNPAIRED data
+For UNPAIRED data:
+```bash
 for RNA_PREFIX in $(cat ${SRA_LIST})
 do
     RNASEQ=${RNA_PREFIX}_clean.fastq.gz
@@ -136,7 +155,7 @@ Next, use `Hisat2` to align your RNAseq data to your genome.
 Another aligner you could use for this is STAR, but for most purposes Hisat2 is good enough. STAR is more computationally expensive and runs more slowly, but can be better with draft genome and poor quality genomes. If you're interested in knowing more, start [here first](https://www.biostars.org/p/288726/), then [here](https://pmc.ncbi.nlm.nih.gov/articles/PMC5792058/), and then [here](https://pmc.ncbi.nlm.nih.gov/articles/PMC7084517/).
 
 
-```python
+```bash
 # name your file prefixes
 NAME=name-of-your-alignment-run
 IDX=prefix-for-your-database
@@ -146,7 +165,7 @@ hisat2-build ${GENOME} ${IDX}
 ```
 
 
-```python
+```bash
 # gather your forward and reverse reads from trimmomatic into comma delimited lists with no white spaces
 FWD_FILES=$(ls -m SRR*fpaired.fq.gz)
 FWD_FILES=$(sed -s 's/ //g' $FWD_FILES)
@@ -158,13 +177,13 @@ hisat2 -p 32 -q -x ${IDX} -1 ${FWD_FILES} -2 ${REV_FILES} > ${NAME}-hisat2-rnase
 ```
 
 
-```python
+```bash
 # run hisat2 for PAIRED data
 hisat2 -p 32 -q -x ${IDX} -U ${RNASEQ} > ${NAME}-hisat2-rnaseq.sam  2> ${NAME}-hisat2-align.err
 ```
 
 
-```python
+```bash
 # turn your SAM files into sorted BAM files
 samtools view -bS -@ 12 ${NAME}-hisat2-rnaseq.sam -o ${NAME}-hisat2-rnaseq.bam
 samtools sort -@ 12 ${NAME}-hisat2-rnaseq.bam -o ${NAME}-hisat2-rnaseq_sorted.bam
@@ -184,7 +203,7 @@ rm ${NAME}-hisat2-rnaseq.sam; rm ${NAME}-hisat2-rnaseq.bam
 `--workingdir`, names the output directory
 
 
-```python
+```bash
 T=32
 SORTED_BAM="rnaseq_sorted.bam"
 
@@ -223,7 +242,7 @@ You may also want to turn off `--repeats2evm` if you are dealing with a fungi ge
 If you want to learn more about funannotate's gene prediction options, read [this](https://funannotate.readthedocs.io/en/stable/predict.html#gene-prediction).
 
 
-```python
+```bash
 GENOME=softmasked-genome.fasta
 OUT_DIR=funannotate-output-name
 SPECIES="SpeciesNameWithNoSpaces"
@@ -248,7 +267,7 @@ There are many other programmes designed to predict 3' and 5' UTRs for different
 remember to set your `--max_intronlen` to something sensible for your species
 
 
-```python
+```bash
 # predict UTRs with funannotate update
 singularity exec -B ${PWD}:${PWD},${HOME} ${HOME}/funannotate.sif funannotate update --fasta genome.fa --gff braker.gff -o output-dir-name --species "Species name" --cpus 48 --max_intronlen 100000 --left [ES]RR*_1.fastq.gz --right [ES]RR*_2.fastq.gz 
 ```
@@ -272,7 +291,7 @@ Make a textfile list of all the gffs you want to compare. They must all be on th
 The output `.tracking` file will have a serioes of columns, one for each gff. They will not be named, but they are in order of your input.
 
 
-```python
+```bash
 gffcompare -r reference-annotation.gff -i input-gffs.txt -o gffcompare-output-prefix
 ```
 
