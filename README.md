@@ -1,7 +1,7 @@
 # Eukaryotic Gene Prediction and Annotation
 Automated gene prediction and annotation is an imperfect process. It can be messy, and it is not always better than manual annotation. Its result still need to be checked manually to make sure they make sense. Perhaps one day there will be a trust worthy quality metric, but today is not that day.
 
-I always recommend loading your genome into a genome viewer like Artemis, Apollo, or IGV **and** checking summary stats make sense for your organism (e.g. average gene length or number of gene).
+I always recommend loading your genome into a genome viewer like Artemis or IGV **and** checking summary stats make sense for your organism (e.g. average gene length or number of gene).
 
 
 ## Software you'll need
