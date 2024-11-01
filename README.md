@@ -6,6 +6,8 @@ I always recommend loading your genome into a genome viewer like Artemis or IGV 
 
 ## Software you'll need
 
+- This perl script by Micheal Gerth to download sra files: https://raw.githubusercontent.com/gerthmicha/perlscripts/refs/heads/master/sra_download.pl
+
 - `hisat2`, the aligner we will be using
 
 - `trimmomatic`, to clean up messy RNAseq data
@@ -46,7 +48,6 @@ bash test3.sh # tests BRAKER3
 ```bash
 singularity build funannotate.sif docker://nextgenusfs/funannotate:latest
 ```
-
 
 # The steps to annotate a genome *in silico*
 
