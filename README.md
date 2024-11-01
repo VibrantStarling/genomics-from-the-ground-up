@@ -5,20 +5,25 @@ I always recommend loading your genome into a genome viewer like Artemis or IGV 
 
 
 ## Software you'll need
-The singularity image for `dfam-TEtool` (dfam-tetools-latest.sif) in your home directory. This allows access to `Repeatmasker` and `RepeatModeller`
+
+- `hisat2`, the aligner we will be using
+
+- `trimmomatic`, to clean up messy RNAseq data
+
+- `samtools`, to handle SAM and BAM files (the raw aligned data)
+
+- `seqkit`, to quickly and cleanly handle and edit fastq files
 
 ```bash
-singularity pull dfam-tetools-latest.sif docker://dfam/tetools:latest
+# install all of the above with conda
 conda install -c bioconda hisat2 trimmomatic samtools seqkit
 ```
 
-`hisat2`, the aligner we will be using
+- The singularity image for `dfam-TEtool` (dfam-tetools-latest.sif) in your home directory. This allows access to `Repeatmasker` and `RepeatModeller`
 
-`trimmomatic`, to clean up messy RNAseq data
-
-`samtools`, to handle SAM and BAM files (the raw aligned data)
-
-`seqkit`, to quickly and cleanly handle and edit fastq files
+```bash
+singularity pull dfam-tetools-latest.sif docker://dfam/tetools:latest
+```
 
 The singularity image for `BRAKER`:
 
@@ -34,7 +39,6 @@ singularity exec -B $PWD:$PWD braker3.sif cp /opt/BRAKER/example/singularity-tes
 bash test1.sh # tests BRAKER1
 bash test2.sh # tests BRAKER2
 bash test3.sh # tests BRAKER3
-
 ```
 
 The singularity image for `Funannotate`:
