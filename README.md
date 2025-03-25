@@ -183,7 +183,7 @@ hisat2 -p 32 -q -x ${IDX} -1 ${FWD_FILES} -2 ${REV_FILES} > ${NAME}-hisat2-rnase
 
 
 ```bash
-# run hisat2 for PAIRED data
+# run hisat2 for UNPAIRED data
 hisat2 -p 32 -q -x ${IDX} -U ${RNASEQ} > ${NAME}-hisat2-rnaseq.sam  2> ${NAME}-hisat2-align.err
 ```
 
@@ -211,13 +211,15 @@ rm ${NAME}-hisat2-rnaseq.sam; rm ${NAME}-hisat2-rnaseq.bam
 ```bash
 T=32
 SORTED_BAM="rnaseq_sorted.bam"
+PROT_DB="path/to/proteinDB.fa"
+GENOME="path/to/softmasked-genome.fasta"
 
 # This combines the input bam name and potein database used into one name
 # This will be your output directory
 WD=$(basename -s .bam ${SORTED_BAM})_$(basename -s .fa ${PROT_DB})
 
 # run BRAKER3
-singularity exec -B ${PWD}:${PWD},${HOME} ${HOME}/braker3.sif braker.pl --genome=${GENOME} --prot_seq=${HOME}/BRAKER-DB/Alveolata.fa --bam=${SORTED_BAM} --threads=${T} --gff
+singularity exec -B ${PWD}:${PWD},${HOME} ${HOME}/braker3.sif braker.pl --genome=${GENOME} --prot_seq=${PROT_DB} --bam=${SORTED_BAM} --threads=${T} --gff
 ```
 
 #### **Getting BUSCO scores**
