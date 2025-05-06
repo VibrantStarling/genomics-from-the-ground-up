@@ -197,7 +197,46 @@ rm ${NAME}-hisat2-rnaseq.sam; rm ${NAME}-hisat2-rnaseq.bam
 
 ### **Run BRAKER3**
 
-[BRAKER3](https://github.com/Gaius-Augustus/BRAKER) requires three main inputs to run 1) your genome 2) your aligned reads for that genome 3) a reference protein database for your organism. You can make your own protein database, but the BRAKER3 team have complied some [prepartitioned collections](https://bioinf.uni-greifswald.de/bioinf/partitioned_odb11/) from OrthoDB for you. 
+[BRAKER3](https://github.com/Gaius-Augustus/BRAKER) requires three main inputs to run 1) your genome 2) your aligned reads for that genome 3) a reference protein database for your organism. You can make your own protein database, but the BRAKER3 team have complied some [prepartitioned collections](https://github.com/Gaius-Augustus/BRAKER?tab=readme-ov-file#overview-of-modes-for-running-braker) from OrthoDB for you. 
+
+**Prepare your protein database**
+
+Protein databases prepared by the BRAKER team may include the organism you are examining. Use biopython to remove organisms by taxid. You will need to check [OrthoDB](https://www.orthodb.org/) for your organisms's NCBI accession and then cross reference [NCBI](https://www.ncbi.nlm.nih.gov/taxonomy) for the taxid.
+
+Import SeqIO from Biopython
+```python
+from Bio import SeqIO
+```
+Make a list of taxids to remove followed by an underscore like: `['12345_', '57689_']`. The underscore stops it picking up shorter, similar IDs.
+```
+taxids = ['747725_']
+```
+Give the name the protein database you want to edits and make sure you're in the same directory as your database fasta file
+```
+database = 'Fungi.fa'
+```
+Run this for loop to find the unwanted IDs
+```
+taxa=[]
+for record in SeqIO.parse(database, "fasta"):
+        for taxid in taxids:
+                if record.id.startswith(taxid):
+                        taxa.append(record.id)
+
+print("Number of ids to remove: "+str(len(taxa)))  
+```
+Load the database fasta file as a dictionary and delete the entries with unwanted taxids
+```
+record_dict = SeqIO.to_dict(SeqIO.parse(database, "fasta"))
+
+for i in taxa:
+        del record_dict[i]
+```
+Save your record dictionary as a fasta file. This is the database you will use with BRAKER3.
+```     
+with open('Fungi-without-MlusitanicusCBS27749.fa', 'w') as handle:
+        SeqIO.write(record_dict.values(), handle, 'fasta')
+```
 
 **We want to run BRAKER3 with several additional flags:**
 
