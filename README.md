@@ -6,7 +6,11 @@ I always recommend loading your genome into a genome viewer like Artemis or IGV 
 
 ## Software you'll need
 
-- This perl script by Micheal Gerth to download sra files: https://raw.githubusercontent.com/gerthmicha/perlscripts/refs/heads/master/sra_download.pl
+- This perl script by Micheal Gerth to download sra files:
+
+```bash
+wget https://raw.githubusercontent.com/gerthmicha/perlscripts/refs/heads/master/sra_download.pl
+```
 
 - `hisat2`, the aligner we will be using
 
